@@ -71,7 +71,8 @@ class WeChatController extends Controller
 		        		return '报名入口： ' . $url;
 		        	}
 
-		        	$url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
+		        	// $url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
+		        	$url = 'http://wap.ukuhub.com/';
 		        	return '曲谱中心： ' . $url;
 		        	// return $user_openid . '-' . $unionid . '-' . $content . '-' . $createTime;
                     break;

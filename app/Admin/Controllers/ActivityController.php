@@ -147,10 +147,10 @@ class ActivityController extends Controller
                 'max'      => '不能超过50个字符',
             ]);
 
-            $form->date('start_time', '開始時間')->rules('required', [
+            $form->datetime('start_time', '開始時間')->rules('required', [
                 'required' => '字段不能为空'
             ]);
-            $form->date('end_time', '結束時間')->rules('required', [
+            $form->datetime('end_time', '結束時間')->rules('required', [
                 'required' => '字段不能为空'
             ]);
             $form->text('address', '活動地點')->rules('required|max:50', [
