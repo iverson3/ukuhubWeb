@@ -66,12 +66,13 @@ class WeChatController extends Controller
 		        	// 	return "无法识别您的消息";
 		        	// }
 
+		        	if (strpos($content, '报名') !== false) {
+		        		$url = 'http://wap.ukuhub.com/';
+		        		return '报名入口： ' . $url;
+		        	}
+
 		        	$url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
-		        	$list = $app->menu->list();
-
-		        	return json_encode($list);
-
-		        	// return '曲谱中心： ' . $url . '-----' . json_encode($list);
+		        	return '曲谱中心： ' . $url;
 		        	// return $user_openid . '-' . $unionid . '-' . $content . '-' . $createTime;
                     break;
                 case 'image':
@@ -101,7 +102,7 @@ class WeChatController extends Controller
 
 
 
-
+    // 沒有權限
     public function createMenu()
     {
     	// $list = $app->menu->list();
