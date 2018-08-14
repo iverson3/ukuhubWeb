@@ -23,4 +23,7 @@ Route::group(['namespace' => 'Api', 'prefix' => 'music'], function() {
 });
 Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
 	Route::post('getActivityList', 'ActivityController@list');
+	Route::post('getMemberList', 'ActivityController@memberList');
+	Route::post('join/uploadPic', 'ActivityController@uploadPic');
+	Route::post('joinActivity', 'ActivityController@joinActivity');
 });
