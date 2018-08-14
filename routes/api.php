@@ -21,3 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'Api', 'prefix' => 'music'], function() {
 	Route::post('getMusicList', 'MusicController@list');
 });
+Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
+	Route::post('getActivityList', 'ActivityController@list');
+});

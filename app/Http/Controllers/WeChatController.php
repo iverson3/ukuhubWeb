@@ -67,7 +67,9 @@ class WeChatController extends Controller
 		        	// }
 
 		        	$url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
-		        	return '曲谱中心： ' . $url;
+		        	$list = $app->menu->list();
+
+		        	return '曲谱中心： ' . $url . '-----' . json_encode($list);
 		        	// return $user_openid . '-' . $unionid . '-' . $content . '-' . $createTime;
                     break;
                 case 'image':
@@ -94,6 +96,24 @@ class WeChatController extends Controller
 
         return $app->server->serve();
     }
+
+
+
+
+    public function setMenu()
+    {
+    	$list = $app->menu->list();
+    }
+
+
+
+
+
+
+
+
+
+
 
     // 批量导入曲谱图片
     public function multImportImgs()
