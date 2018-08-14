@@ -24,6 +24,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 // 微信开发相关路由设置
 Route::any('/wechat', 'WeChatController@serve');
 
+Route::get('/wechat/menu/create', 'WeChatController@createMenu');
+
 // Route::get('/wechat/music/import', 'WeChatController@multImportImgs');
 // Route::get('/wechat/music/list', 'WeChatController@musicCenter')->name('wechat.music.list');
 // Route::get('/wechat/music/info', 'WeChatController@musicInfo')->name('wechat.music.info');

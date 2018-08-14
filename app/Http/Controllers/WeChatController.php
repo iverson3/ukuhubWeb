@@ -69,7 +69,9 @@ class WeChatController extends Controller
 		        	$url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
 		        	$list = $app->menu->list();
 
-		        	return '曲谱中心： ' . $url . '-----' . json_encode($list);
+		        	return json_encode($list);
+
+		        	// return '曲谱中心： ' . $url . '-----' . json_encode($list);
 		        	// return $user_openid . '-' . $unionid . '-' . $content . '-' . $createTime;
                     break;
                 case 'image':
@@ -100,9 +102,45 @@ class WeChatController extends Controller
 
 
 
-    public function setMenu()
+    public function createMenu()
     {
-    	$list = $app->menu->list();
+    	// $list = $app->menu->list();
+
+    	$app = app('wechat.official_account');
+    	$menuList = [
+		    [
+		        "type" => "click",
+		        "name" => "測試",
+		        "key"  => "V1001_TODAY_MUSIC"
+		    ],
+		    [
+		        "type" => "view",
+		        "name" => "報名入口",
+		        "url"  => "http://wap.ukuhub.com/"
+		    ],
+		    [
+		        "name"       => "曲譜",
+		        "sub_button" => [
+		            [
+		                "type" => "view",
+		                "name" => "指彈",
+		                "url"  => "http://wap.ukuhub.com/"
+		            ],
+		            [
+		                "type" => "view",
+		                "name" => "彈唱",
+		                "url"  => "http://wap.ukuhub.com/"
+		            ],
+		            [
+		                "type" => "click",
+		                "name" => "測試click",
+		                "key" => "V1001_GOOD"
+		            ],
+		        ],
+		    ],
+		];
+		$res = $app->menu->create($menuList);
+		dump($res);
     }
 
 

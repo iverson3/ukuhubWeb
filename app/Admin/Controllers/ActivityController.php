@@ -153,6 +153,10 @@ class ActivityController extends Controller
             $form->date('end_time', '結束時間')->rules('required', [
                 'required' => '字段不能为空'
             ]);
+            $form->text('address', '活動地點')->rules('required|max:50', [
+                'required' => '字段不能为空',
+                'max'      => '不能超过50个字符',
+            ]);
 
             $form->switch('status', '状态')->states(config('ukuhub.music.activityStatusList'))->default(1);
 
