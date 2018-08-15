@@ -63,18 +63,39 @@ class ActivityController extends Controller
 
     public function joinActivity(Request $request)
     {
+    	$pic = $request->pic;
     	if ($request->remark == null) {
     		$remark = '';
     	} else {
     		$remark = $request->remark;
     	}
+    	if ($request->isOldMember == 1) {
+    		$member = ActivityMember::where('wechat', $request->wechat)->first();
+    		if ($member) {
+    			$pic = $member->pic;
+    		}
+    	}
+
+    	// 不許重複報名
+    	$map['activity_id'] = $request->activity_id;
+    	$map['wechat']      = $request->wechat;
+    	$res1 = ActivityMember::where($map)->first();
+    	if ($res1) {
+    		$result = [
+                'success' => false,
+                'data'    => '',
+                'error'   => 'repeat'
+            ];
+            return response()->json($result);
+    	}
+
     	$activityMember = new ActivityMember;
     	$activityMember->activity_id = $request->activity_id;
     	$activityMember->wechat      = $request->wechat;
     	$activityMember->name        = $request->name;
     	$activityMember->music_type  = $request->music_type;
     	$activityMember->level       = $request->level;
-    	$activityMember->pic         = $request->pic;
+    	$activityMember->pic         = $pic;
     	$activityMember->remark      = $remark;
     	$res = $activityMember->save();
     	if ($res) {
@@ -116,5 +137,67 @@ class ActivityController extends Controller
             ];
             return response()->json($result);
         }
+    }
+
+    public function validateMemberByWechat(Request $request)
+    {
+    	$wechat = $request->wechat;
+    	$res = ActivityMember::where('wechat', $wechat)->first();
+    	if ($res) {
+    		$result = [
+                'success' => true,
+                'data'    => '',
+                'error'   => null
+            ];
+    	} else {
+    		$result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '沒有該用戶'
+            ];
+    	}
+    	return response()->json($result);
+    }
+
+    public function searchMember(Request $request)
+    {
+    	$map['activity_id'] = $request->activity_id;
+    	$map['wechat']      = $request->wechat;
+    	$res = ActivityMember::where($map)->first();
+    	if ($res) {
+    		$result = [
+                'success' => true,
+                'data'    => $res,
+                'error'   => null
+            ];
+    	} else {
+    		$result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '沒有該用戶'
+            ];
+    	}
+    	return response()->json($result);
+    }
+
+    public function cancelActivity(Request $request)
+    {
+    	$map['activity_id'] = $request->activity_id;
+    	$map['wechat']      = $request->wechat;
+    	$res = ActivityMember::where($map)->delete();
+    	if ($res) {
+    		$result = [
+                'success' => true,
+                'data'    => '',
+                'error'   => null
+            ];
+    	} else {
+    		$result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '沒有刪除或刪除失敗'
+            ];
+    	}
+    	return response()->json($result);
     }
 }
