@@ -13,6 +13,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Support\MessageBag;
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use View;
 
 class ActivityMemberController extends Controller
 {
@@ -20,6 +21,8 @@ class ActivityMemberController extends Controller
 
     protected $header = "活動人員管理";
     protected $action = '';
+
+    protected $member_id = 0;
 
     /**
      * Index interface.
@@ -209,6 +212,38 @@ class ActivityMemberController extends Controller
 
     public function info(Request $request)
     {
-        dump($request->id);
+        $this->member_id = $request->id;
+        // return Admin::content(function (Content $content) {
+
+        //     // 选填
+        //     $content->header('活動人員詳情');
+
+        //     // 选填
+        //     $content->description('小标题');
+
+        //     // 添加面包屑导航 since v1.5.7
+        //     // $content->breadcrumb(
+        //     //     ['text' => '首页', 'url' => '/admin'],
+        //     //     ['text' => '用户管理', 'url' => '/admin/users'],
+        //     //     ['text' => '编辑用户']
+        //     // );
+
+        //     // 填充页面body部分，这里可以填入任何可被渲染的对象
+        //     $content->body($this->member_id);
+
+        //     // 在body中添加另一段内容
+        //     $content->body('foo bar');
+
+        //     // `row`是`body`方法的别名
+        //     $content->row('hello world');
+        // });
+
+        $member = ActivityMember::where('id', $this->member_id)->first();
+        
+        $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
+        // dump($member);
+
+        View::share('member', $member);
+        return View::make('admin.member.info', []);
     }
 }

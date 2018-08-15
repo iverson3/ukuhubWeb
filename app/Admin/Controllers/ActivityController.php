@@ -103,16 +103,17 @@ class ActivityController extends Controller
             $grid->forwards('轉發量')->sortable();
 
             $grid->column('start_time', '開始時間')->display(function () {
-                return date("Y.m.d", $this->start_time); 
+                return date("m.d h:i", $this->start_time); 
             })->sortable();
             $grid->column('end_time', '結束時間')->display(function () {
-                return date("Y.m.d", $this->end_time); 
+                return date("m.d h:i", $this->end_time); 
             })->sortable();
 
-            $grid->column('statusInfo', '状态')->display(function () {
-                $list = config('ukuhub.music.activityStatusList');
-                return $list[$this->status];
-            })->color('red');
+            // $grid->column('statusInfo', '状态')->display(function () {
+            //     $list = config('ukuhub.music.activityStatusList');
+            //     return $list[$this->status];
+            // })->color('red');
+            $grid->status('狀態')->switch(config('ukuhub.music.statusList'));
 
             $grid->sort('排序')->sortable();
 
@@ -134,6 +135,13 @@ class ActivityController extends Controller
                 // 在保存数据之前根据需要对表单数据进行需要的修改调整或校验
                 $form->start_time = strtotime($form->start_time);
                 $form->end_time   = strtotime($form->end_time);
+
+                // 验证值是够有重复
+                // if ($from->nick_name !== $form->model()->email && User::where('email',$form->email)->value('id')) {
+                //     // 错误信息提示
+                //     $error = new MessageBag(['title' => '提示', 'message' => '邮箱已存在!']);
+                //     return back()->withInput()->with(compact('error'));
+                // }
             });
 
             $form->display('id', 'ID');
