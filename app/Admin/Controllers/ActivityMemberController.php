@@ -240,7 +240,7 @@ class ActivityMemberController extends Controller
 
         $member = ActivityMember::where('id', $this->member_id)->first();
         
-        $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
+        // $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
         // dump($member);
 
         View::share('member', $member);
