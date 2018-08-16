@@ -89,7 +89,9 @@ class ActivityMemberController extends Controller
 
                 $id  = $actions->getKey();
                 $url = '/admin/activityMember/info?id=' . $id;
-                $actions->append('<a href="' . $url . '"><i class="fa fa-eye"></i></a>');
+                // $actions->append('<a href="' . $url . '"><i class="fa fa-eye"></i></a>');
+
+                $actions->append('<a href=""><i class="fa fa-eye"></i></a>');
             });
             // 禁用新建按钮
             $grid->disableCreateButton();
@@ -239,7 +241,7 @@ class ActivityMemberController extends Controller
         // });
 
         $member = ActivityMember::where('id', $this->member_id)->first();
-        
+
         // $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
         // dump($member);
 

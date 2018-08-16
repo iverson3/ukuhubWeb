@@ -10,6 +10,8 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
+use Encore\Admin\Show;
 
 class ActivityController extends Controller
 {
@@ -80,7 +82,10 @@ class ActivityController extends Controller
                 // 也可添加自定义的操作按钮及功能 (看文档)
                 $id  = $actions->getKey();
                 $url = '/admin/activityMember?&activity_id=' . $id;
-                $actions->append('<a href="' . $url . '"><i class="fa fa-eye"></i></a>');
+                $actions->append('<a href="' . $url . '"><i class="fa fa-paper-plane"></i></a>');
+
+                $url2 = '/admin/activity/show?id=' . $id;
+                $actions->append('<a href="' . $url2 . '"><i class="fa fa-eye"></i></a>');
             });
 
             // 过滤字段设置
@@ -103,10 +108,10 @@ class ActivityController extends Controller
             $grid->forwards('轉發量')->sortable();
 
             $grid->column('start_time', '開始時間')->display(function () {
-                return date("m.d h:i", $this->start_time); 
+                return substr($this->start_time, 5, 11); 
             })->sortable();
             $grid->column('end_time', '結束時間')->display(function () {
-                return date("m.d h:i", $this->end_time); 
+                return substr($this->end_time, 5, 11); 
             })->sortable();
 
             // $grid->column('statusInfo', '状态')->display(function () {
@@ -133,8 +138,9 @@ class ActivityController extends Controller
             // 保存前回调
             $form->saving(function ($form) {
                 // 在保存数据之前根据需要对表单数据进行需要的修改调整或校验
-                $form->start_time = strtotime($form->start_time);
-                $form->end_time   = strtotime($form->end_time);
+                // 已在Activity模型中進行時間格式轉換，此處不再需要
+                // $form->start_time = strtotime($form->start_time);
+                // $form->end_time   = strtotime($form->end_time);
 
                 // 验证值是够有重复
                 // if ($from->nick_name !== $form->model()->email && User::where('email',$form->email)->value('id')) {
@@ -184,6 +190,27 @@ class ActivityController extends Controller
 
             $form->display('created_at', '創建時間');
             $form->display('updated_at', '更新時間');
+        });
+    }
+
+    public function show(Request $request)
+    {
+        $id = intval($request->id);
+        return Admin::content(function (Content $content) use ($id) {
+
+            $content->header('活動详情');
+            $content->description('详情');
+
+            $content->body(Admin::show(Activity::findOrFail($id), function (Show $show) {
+
+                $show->id('ID');
+                $show->name('标题');
+                $show->author('发起人');
+                $show->content('内容');
+                $show->created_at();
+                $show->updated_at();
+
+            }));
         });
     }
 }

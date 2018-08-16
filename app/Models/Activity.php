@@ -11,4 +11,31 @@ class Activity extends Model
     protected $hidden = [];
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
+
+    public function setStartTimeAttribute($value)
+    {
+        $this->attributes['start_time'] = is_int($value) ? $value : strtotime($value);
+    }
+ 
+    public function getStartTimeAttribute()
+    {
+    	if (is_int($this->attributes['start_time'])) {
+    		return date('Y-m-d H:i:s', $this->attributes['start_time']);
+    	}
+        return $this->attributes['start_time'];
+    }
+
+    public function setEndTimeAttribute($value)
+    {
+        $this->attributes['end_time'] = is_int($value) ? $value : strtotime($value);
+    }
+ 
+    public function getEndTimeAttribute()
+    {
+    	if (is_int($this->attributes['end_time'])) {
+    		return date('Y-m-d H:i:s', $this->attributes['end_time']);
+    	}
+        return $this->attributes['end_time'];
+    }
+
 }
