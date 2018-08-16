@@ -232,10 +232,8 @@ class ActivityMemberController extends Controller
                 }
 
                 $show->remark('备注信息');
-                // $show->status('状态');
                 $show->status('状态')->as(function ($status) {
-                    dump($status);
-                    if ($status === 1) {
+                    if (intval($status) === 1) {
                         return '可用';
                     } else {
                         return '禁用';
