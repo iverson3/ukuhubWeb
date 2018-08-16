@@ -32,8 +32,8 @@ class Activity extends Model
  
     public function getEndTimeAttribute()
     {
-    	if (is_int($this->attributes['end_time'])) {
-    		return date('Y-m-d H:i:s', $this->attributes['end_time']);
+    	if (is_int($this->attributes['end_time']) || strpos($this->attributes['end_time'], '-') === false) {
+    		return date('Y-m-d H:i:s', intval($this->attributes['end_time']));
     	}
         return $this->attributes['end_time'];
     }
