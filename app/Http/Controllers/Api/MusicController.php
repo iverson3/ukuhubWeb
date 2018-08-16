@@ -57,6 +57,7 @@ class MusicController extends Controller
                 'error'   => '没有曲譜'
             ];
         }
-        return response()->json($result);
+        // 最后一个参数 options = 1 则不会把返回的数据中int类型的数据转换成string类型
+        return response()->json($result, 200, [], 1);
     }
 }
