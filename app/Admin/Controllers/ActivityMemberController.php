@@ -122,6 +122,7 @@ class ActivityMemberController extends Controller
                 $filter->like('wechat', '微信號');
                 $filter->equal('music_type', '樂器類型')->select(config('ukuhub.music.music_type'));
                 $filter->equal('level', '分組')->select(config('ukuhub.music.level'));
+                $filter->equal('join_status', '报名状态')->select(config('ukuhub.music.joinStatus'));
                 $filter->equal('status', '状态')->select(config('ukuhub.music.statusSelect'));
                 $filter->between('created_at', '報名时间')->datetime();
             });
@@ -132,6 +133,7 @@ class ActivityMemberController extends Controller
             $grid->music_type('樂器類型');
             $grid->level('分組');
             $grid->remark('備註信息');
+            $grid->join_status('报名状态')->switch(config('ukuhub.music.joinStatusList'));
             $grid->status('状态')->switch(config('ukuhub.music.statusList'));
             $grid->created_at('報名時間')->sortable();
         });
@@ -194,6 +196,7 @@ class ActivityMemberController extends Controller
             $form->text('remark', '備註信息')->rules('max:100', [
                 'max' => '不能超过100个字符',
             ]);
+            $form->switch('join_status', '报名状态')->states(config('ukuhub.music.joinStatusList'))->default(1);
             $form->switch('status', '状态')->states(config('ukuhub.music.statusList'))->default(1);
 
             $form->display('created_at', '創建時間');
@@ -232,6 +235,13 @@ class ActivityMemberController extends Controller
                 }
 
                 $show->remark('备注信息');
+                $show->join_status('报名状态')->as(function ($status) {
+                    if (intval($status) === 1) {
+                        return '已报名';
+                    } else {
+                        return '已取消';
+                    }
+                });
                 $show->status('状态')->as(function ($status) {
                     if (intval($status) === 1) {
                         return '可用';
@@ -247,41 +257,51 @@ class ActivityMemberController extends Controller
 
 
 
-    // 自定义详情页 (弃用)
+    // 自定义详情页 (弃用 可作参考)
     public function info(Request $request)
     {
         $this->member_id = $request->id;
-        // return Admin::content(function (Content $content) {
 
-        //     // 选填
-        //     $content->header('活動人員詳情');
+        // 数据库查询操作 获取需要渲染到模板里面的数据
+        $data = [];
+        $list = array();
 
-        //     // 选填
-        //     $content->description('小标题');
+        return Admin::content(function (Content $content) use ($data, $list) {
 
-        //     // 添加面包屑导航 since v1.5.7
-        //     // $content->breadcrumb(
-        //     //     ['text' => '首页', 'url' => '/admin'],
-        //     //     ['text' => '用户管理', 'url' => '/admin/users'],
-        //     //     ['text' => '编辑用户']
-        //     // );
+            // 选填
+            $content->header('活動人員詳情');
 
-        //     // 填充页面body部分，这里可以填入任何可被渲染的对象
-        //     $content->body($this->member_id);
+            // 选填
+            $content->description('小标题');
 
-        //     // 在body中添加另一段内容
-        //     $content->body('foo bar');
+            // 添加面包屑导航 since v1.5.7
+            // $content->breadcrumb(
+            //     ['text' => '首页', 'url' => '/admin'],
+            //     ['text' => '用户管理', 'url' => '/admin/users'],
+            //     ['text' => '编辑用户']
+            // );
 
-        //     // `row`是`body`方法的别名
-        //     $content->row('hello world');
-        // });
+            // 填充页面body部分，这里可以填入任何可被渲染的对象
+            $content->body($this->member_id);
 
-        $member = ActivityMember::where('id', $this->member_id)->first();
+            // body方法可接受 laravel的视图模板作为参数
+            $content->body(view('admin.member.info', ['data' => $data, 'list' => $list]));
 
-        // $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
-        // dump($member);
+            // 在body中添加另一段内容
+            $content->body('foo bar');
 
-        View::share('member', $member);
-        return View::make('admin.member.info', []);
+            // `row`是`body`方法的别名
+            $content->row('hello world');
+        });
+
+
+
+        // $member = ActivityMember::where('id', $this->member_id)->first();
+        //
+        // // $member->pic = config('filesystems.disks.admin.url') . '/' . $member->pic;
+        // // dump($member);
+        //
+        // View::share('member', $member);
+        // return View::make('admin.member.info', []);
     }
 }

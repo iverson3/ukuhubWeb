@@ -29,10 +29,18 @@ return [
 			'on'  => ['value' => 1, 'text' => '可用', 'color' => 'primary'],
             'off' => ['value' => 0, 'text' => '禁用', 'color' => 'default']
 		],
+        'joinStatusList' => [
+            'on'  => ['value' => 1, 'text' => '已报名', 'color' => 'primary'],
+            'off' => ['value' => 0, 'text' => '已取消', 'color' => 'default']
+        ],
 		'statusSelect' => [
 			0 => '禁用',
 			1 => '啟用'
 		],
+        'joinStatus' => [
+            0 => '已取消',
+            1 => '已报名'
+        ],
 		'activityStatusList' => [
 			0 => '結束',
 	        1 => '開啟',

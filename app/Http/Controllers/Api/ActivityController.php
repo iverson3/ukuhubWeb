@@ -14,6 +14,7 @@ class ActivityController extends Controller
     	$orderby = $request->orderby;
     	$map = array();
     	$map['status'] = 1;
+    	$map[] = array('start_time', 'gt', time() + 60 * 60 * 12);  // 活动开始前12h不再允许报名
     	$res = Activity::where($map)->orderBy($orderby)->get();
     	if ($res) {
         	$res = $res->toArray();
@@ -39,7 +40,8 @@ class ActivityController extends Controller
     {
     	$id = $request->id;
     	$map['activity_id'] = $id;
-    	$map['status'] = 1;
+    	$map['status']      = 1;
+    	$map['join_status'] = 1;
     	$res = ActivityMember::where($map)->select('id', 'name', 'music_type', 'level', 'pic', 'remark', 'created_at')->orderBy('created_at', 'desc')->get();
     	if ($res) {
         	$res = $res->toArray();
@@ -76,11 +78,24 @@ class ActivityController extends Controller
     		}
     	}
 
+    	// 黑名单用户不许报名
+        $map1['wechat'] = $request->wechat;
+    	$map1['status'] = 0;
+        $res1 = ActivityMember::where($map1)->first();
+        if ($res1) {
+            $result = [
+                'success' => false,
+                'data'    => '',
+                'error'   => 'black'
+            ];
+            return response()->json($result);
+        }
+
     	// 不許重複報名
-    	$map['activity_id'] = $request->activity_id;
-    	$map['wechat']      = $request->wechat;
-    	$res1 = ActivityMember::where($map)->first();
-    	if ($res1) {
+    	$map2['activity_id'] = $request->activity_id;
+    	$map2['wechat']      = $request->wechat;
+    	$res2 = ActivityMember::where($map2)->first();
+    	if ($res2) {
     		$result = [
                 'success' => false,
                 'data'    => '',
@@ -163,6 +178,7 @@ class ActivityController extends Controller
     {
     	$map['activity_id'] = $request->activity_id;
     	$map['wechat']      = $request->wechat;
+    	$map['join_status'] = 1;
     	$res = ActivityMember::where($map)->first();
     	if ($res) {
     		$result = [
@@ -184,7 +200,8 @@ class ActivityController extends Controller
     {
     	$map['activity_id'] = $request->activity_id;
     	$map['wechat']      = $request->wechat;
-    	$res = ActivityMember::where($map)->delete();
+    	$data['join_status'] = 0;
+    	$res = ActivityMember::where($map)->save($data);
     	if ($res) {
     		$result = [
                 'success' => true,
