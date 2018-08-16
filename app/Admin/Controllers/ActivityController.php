@@ -203,9 +203,27 @@ class ActivityController extends Controller
 
             $content->body(Admin::show(Activity::findOrFail($id), function (Show $show) {
 
+                // 修改面板的样式和标题
+                // style的取值可以是primary、info、danger、warning、default
+                $show->panel()
+                    ->style('default')
+                    ->title('活动详情面板');
+
+                // 设置面板右上角默认的三个按钮编辑、删除、列表
+                // $show->panel()
+                //     ->tools(function ($tools) {
+                //         $tools->disableEdit();
+                //         $tools->disableList();
+                //         $tools->disableDelete();
+                //     });
+
+                // 在字段之间添加一条分隔线
+                // $show->divider();
+
                 $show->id('ID');
                 $show->name('标题');
                 $show->author('发起人');
+                $show->pic('封面图')->image('', 300);
                 $show->content('内容');
                 $show->created_at();
                 $show->updated_at();

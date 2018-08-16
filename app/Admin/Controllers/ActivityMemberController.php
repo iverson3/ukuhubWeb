@@ -13,6 +13,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Support\MessageBag;
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use Encore\Admin\Show;
 use View;
 
 class ActivityMemberController extends Controller
@@ -23,6 +24,7 @@ class ActivityMemberController extends Controller
     protected $action = '';
 
     protected $member_id = 0;
+    protected $picFieldType = '';
 
     /**
      * Index interface.
@@ -46,8 +48,10 @@ class ActivityMemberController extends Controller
      * @param $id
      * @return Content
      */
-    public function edit($id)
+    public function edit($id, Request $request)
     {
+        $this->picFieldType = $request->picFieldType;
+
         return Admin::content(function (Content $content) use ($id) {
 
             $content->header($this->header);
@@ -88,10 +92,17 @@ class ActivityMemberController extends Controller
                 $actions->disableEdit();
 
                 $id  = $actions->getKey();
-                $url = '/admin/activityMember/info?id=' . $id;
-                // $actions->append('<a href="' . $url . '"><i class="fa fa-eye"></i></a>');
+                $row = $actions->row;
+                if ($row->level === '萌新') {
+                    $picFieldType = 'pic';
+                } else {
+                    $picFieldType = 'url';
+                }
+                $url = '/admin/activityMember/show?id=' . $id . '&picFieldType=' . $picFieldType;
+                $actions->append('<a href="' . $url . '"><i class="fa fa-eye"></i></a>');
 
-                $actions->append('<a href=""><i class="fa fa-eye"></i></a>');
+                $url2 = '/admin/activityMember/'.$id.'/edit?picFieldType=' . $picFieldType;
+                $actions->append('<a href="' . $url2 . '"><i class="fa fa-edit"></i></a>');
             });
             // 禁用新建按钮
             $grid->disableCreateButton();
@@ -138,34 +149,9 @@ class ActivityMemberController extends Controller
             // 保存前回调
             $form->saving(function ($form) {
                 // 在保存数据之前根据需要对表单数据进行需要的修改调整或校验
-
                 if ($form->remark == null) {
                     $form->remark = '';
                 }
-
-                // dump($form->pic1);
-                // dump($form->activity_id);
-
-                // foreach ($form as $key => $value) {
-                //     dump($key);
-                //     dump($value);
-                // }
-                // exit;
-
-                // $form->pic = "";
-                // if ($form->level == '萌新') {
-                //     $form->pic = $form->pic1;
-                // } else {
-                //     $form->pic = $form->pic2;
-                // }
-
-                // if ($form->pic == '') {
-                //     $error = new MessageBag([
-                //         'pic1' => '必二選其一',
-                //     ]);
-                //     return back()->with(compact('error'));
-                //     return response('error');
-                // }
             });
 
             $form->display('id', 'ID');
@@ -196,11 +182,14 @@ class ActivityMemberController extends Controller
                 'required' => '字段不能为空'
             ]);
 
-            $form->image('pic', '琴照片')->removable();
-            // $form->text('pic2', '視頻地址url')->rules('max:100', [
-            //     'max' => '不能超过100个字符',
-            // ]);
-            // $form->ignore(['pic1', 'pic2']);
+            if ($this->picFieldType === 'pic') {
+                $form->image('pic', '琴照')->removable();
+            } else {
+                $form->text('pic', '视频地址')->rules('required|max:100', [
+                    'required' => '字段不能为空',
+                    'max' => '不能超过100个字符'
+                ]);
+            }
 
             $form->text('remark', '備註信息')->rules('max:100', [
                 'max' => '不能超过100个字符',
@@ -212,6 +201,53 @@ class ActivityMemberController extends Controller
         });
     }
 
+    public function show(Request $request)
+    {
+        $id           = intval($request->id);
+        $picFieldType = $request->picFieldType;
+
+        return Admin::content(function (Content $content) use ($id, $picFieldType) {
+
+            $content->header('活动人员');
+            $content->description('详情');
+
+            $content->body(Admin::show(ActivityMember::findOrFail($id), function (Show $show) use ($picFieldType) {
+
+                $show->panel()
+                    ->tools(function ($tools) {
+                        $tools->disableEdit();
+                        $tools->disableDelete();
+                    });
+
+                $show->id('ID');
+                $show->name('名字');
+                $show->wechat('微信号');
+                $show->music_type('乐器类型');
+                $show->level('能力分级');
+
+                if ($picFieldType === 'pic') {
+                    $show->pic('琴图')->image('', 300);
+                } else {
+                    $show->pic('视频链接')->link();
+                }
+
+                $show->remark('备注信息');
+                $show->status('状态')->as(function ($status) {
+                    if ($status === 1) {
+                        return '可用';
+                    } else {
+                        return '禁用';
+                    }
+                });
+                $show->created_at('报名时间');
+
+            }));
+        });
+    }
+
+
+
+    // 自定义详情页 (弃用)
     public function info(Request $request)
     {
         $this->member_id = $request->id;
