@@ -19,8 +19,8 @@ class Activity extends Model
  
     public function getStartTimeAttribute()
     {
-    	if (is_int($this->attributes['start_time'])) {
-    		return date('Y-m-d H:i:s', $this->attributes['start_time']);
+    	if (is_int($this->attributes['start_time']) || strpos($this->attributes['start_time'], '-') === false) {
+    		return date('Y-m-d H:i:s', intval($this->attributes['start_time']));
     	}
         return $this->attributes['start_time'];
     }
