@@ -14,7 +14,7 @@ class ActivityController extends Controller
     	$orderby = $request->orderby;
     	$map = array();
     	$map['status'] = 1;
-    	$map[] = array('start_time', 'gt', time() + 60 * 60 * 12);  // 活动开始前12h不再允许报名
+    	// $map[] = ['start_time', '>', time() + 60 * 60 * 12];  // 活动开始前12h不再允许报名
     	$res = Activity::where($map)->orderBy($orderby)->get();
     	if ($res) {
         	$res = $res->toArray();
