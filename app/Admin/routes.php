@@ -16,6 +16,7 @@ Route::group([
 
     $router->resource('music', MusicController::class);
 
+    $router->get('activity/selectGroup', 'ActivityMemberController@selectGroup');
     $router->resource('activity', ActivityController::class);
 
     $router->get('activityMember/info', 'ActivityMemberController@info');

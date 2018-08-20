@@ -29,4 +29,6 @@ Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
 	Route::post('validateMemberByWechat', 'ActivityController@validateMemberByWechat');
 	Route::post('searchMember', 'ActivityController@searchMember');
 	Route::post('cancelActivity', 'ActivityController@cancelActivity');
+	Route::post('getGroupAndMember', 'ActivityController@getGroupAndMember')->name('api.activity.getGroupAndMember');
+	Route::post('saveGroupSetting', 'ActivityController@saveGroupSetting')->name('api.activity.saveGroupSetting');
 });

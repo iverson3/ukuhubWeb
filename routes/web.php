@@ -19,6 +19,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/activity/selectgroup', 'Activity\ActivityController@selectGroup');
+
 
 
 // 微信开发相关路由设置

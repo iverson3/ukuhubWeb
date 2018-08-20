@@ -255,6 +255,31 @@ class ActivityMemberController extends Controller
         });
     }
 
+    // 活动分组
+    public function selectGroup(Request $request)
+    {
+        $activity_id = $request->activity_id;
+
+        $map['activity_id'] = $activity_id;
+        $map['status']      = 1;
+        $map['join_status'] = 1;
+        $list = ActivityMember::where($map)->orderBy('created_at')->get();
+
+        $groupLeaderList = explode(',', config('activity.team.leader'));
+
+        // dump($groupLeaderList);
+        // dump($list);
+
+        return Admin::content(function (Content $content) use ($list) {
+
+            $content->header('活动分组');
+            $content->description('人员分组');
+
+            $content->body(view('admin.member.selectGroup', ['id' => 3, 'list' => $list]));
+
+        });
+    }
+
 
 
     // 自定义详情页 (弃用 可作参考)
@@ -293,7 +318,6 @@ class ActivityMemberController extends Controller
             // `row`是`body`方法的别名
             $content->row('hello world');
         });
-
 
 
         // $member = ActivityMember::where('id', $this->member_id)->first();

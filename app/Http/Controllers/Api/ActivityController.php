@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\ActivityMember;
+use App\Models\Group;
 
 class ActivityController extends Controller
 {
@@ -216,5 +217,91 @@ class ActivityController extends Controller
             ];
     	}
     	return response()->json($result);
+    }
+
+
+    public function getGroupAndMember(Request $request)
+    {
+        $activity_id = $request->activity_id;
+        $uid         = $request->uid;
+        $groups = array();
+
+        $groupList = Group::where('activity_id', $activity_id)->select('leader', 'members')->get();
+        $groupList = $groupList->toArray();
+
+        if ($groupList) {
+            foreach ($groupList as $key => $group) {
+                $memberList = array();
+                $ids = explode(',', $group['members']);
+                foreach ($ids as $k => $v) {
+                    $member = ActivityMember::where('id', $v)->select('id','wechat','name','music_type','level','remark')->first();
+                    if ($member) {
+                        $memberList[] = $member;
+                    }
+                }
+
+                $groups[$group['leader']] = $memberList;
+            }
+        } else {
+            $groupLeaderList = explode(',', config('activity.team.leader'));
+
+            $map['activity_id'] = $activity_id;
+            $map['status']      = 1;
+            $map['join_status'] = 1;
+            $memberList = ActivityMember::where($map)->orderBy('created_at')->get();
+
+            $sum = floor(count($memberList->toArray()) / count($groupLeaderList));
+            $n   = 0;
+
+            foreach ($groupLeaderList as $k => $leader) {
+
+                $mark = 0;
+                $idArr = array();
+                for ($i = $n; $i < count($memberList); $i++) {
+                    $idArr[] = $memberList[$i]['id'];
+                    $groups[$leader][] = $memberList[$i]->toArray();
+                    $n++;
+                    $mark++;
+                    if ($mark == $sum && ($k < count($groupLeaderList) - 1)) {
+                        break;
+                    }
+                }
+                $ids = implode(',', $idArr);
+
+                $group = new Group;
+                $group->activity_id = $activity_id;
+                $group->leader      = $leader;
+                $group->music_type  = '未知';
+                $group->level       = '未知';
+                $group->members     = $ids;
+                $group->remark      = '';
+                $group->uid         = $uid;
+                $res = $group->save();
+            }
+        }
+
+        $data['groups'] = $groups;
+        return response()->json($data);
+    }
+
+    // 保存分组设置
+    public function saveGroupSetting(Request $request)
+    {
+        $activity_id = $request->activity_id;
+        $groups      = $request->groups;
+        foreach ($groups as $key => $group) {
+            $ids = implode(',', $group);
+            $map['activity_id'] = $activity_id;
+            $map['leader']      = $key;
+
+            $data['members'] = $ids;
+            Group::where($map)->update($data);
+        }
+        $result = [
+            'success' => true,
+            'data'    => '',
+            'error'   => null
+        ];
+        return response()->json($result);
     }
 }
