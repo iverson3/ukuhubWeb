@@ -88,7 +88,7 @@ class ActivityController extends Controller
                 $actions->append('<a href="' . $url2 . '"><i class="fa fa-eye"></i></a>');
 
                 $url3 = '/activity/selectgroup?activity_id=' . $id . '&uid=' . Admin::user()->id;
-                $actions->append('<a href="' . $url3 . '"><i class="fa fa-eye"></i></a>');
+                $actions->append('<a href="' . $url3 . '"><i class="fa fa-list"></i></a>');
             });
 
             // 过滤字段设置

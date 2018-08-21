@@ -22,6 +22,8 @@ Route::group([
     $router->get('activityMember/info', 'ActivityMemberController@info');
     $router->resource('activityMember', ActivityMemberController::class);
 
+    $router->resource('group', GroupController::class);
+
 });
 
 
