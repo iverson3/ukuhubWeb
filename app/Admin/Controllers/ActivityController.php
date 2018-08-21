@@ -87,6 +87,7 @@ class ActivityController extends Controller
                 $url2 = '/admin/activity/show?id=' . $id;
                 $actions->append('<a href="' . $url2 . '"><i class="fa fa-eye"></i></a>');
 
+                // 通过判断时间来决定是否显示这个操作按钮
                 $url3 = '/activity/selectgroup?activity_id=' . $id . '&uid=' . Admin::user()->id;
                 $actions->append('<a href="' . $url3 . '"><i class="fa fa-list"></i></a>');
             });

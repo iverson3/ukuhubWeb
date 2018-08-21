@@ -131,6 +131,15 @@
             return parseInt(member.id)
           })
         })
+
+        Object.keys(data).map((key) => {
+          if (data[key].length === 0) {
+            this.saveTip = '不允许组长没有组员,请重新设置'
+          }
+        })
+        if (this.saveTip === '不允许组长没有组员,请重新设置') {
+          return false
+        }
         console.log(data)
 
         this.$http.post(

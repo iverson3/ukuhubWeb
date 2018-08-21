@@ -45454,6 +45454,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           return parseInt(member.id);
         });
       });
+
+      Object.keys(data).map(function (key) {
+        if (data[key].length === 0) {
+          _this2.saveTip = '不允许组长没有组员,请重新设置';
+        }
+      });
+      if (this.saveTip === '不允许组长没有组员,请重新设置') {
+        return false;
+      }
       console.log(data);
 
       this.$http.post(this.save_api_url, { 'activity_id': this.activity_id, 'groups': data }, { emulateJSON: true }).then(function (res) {
