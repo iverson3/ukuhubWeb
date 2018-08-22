@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Music;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
@@ -59,5 +60,24 @@ class MusicController extends Controller
         }
         // 最后一个参数 options = 1 则不会把返回的数据中int类型的数据转换成string类型
         return response()->json($result, 200, [], 1);
+    }
+
+    public function incrementView(Request $request)
+    {
+        $res = Music::where('id', $request->id)->increment('views');
+        if ($res) {
+            $result = [
+                'success' => true,
+                'data'    => '',
+                'error'   => null
+            ];
+        } else {
+            $result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '操作失败'
+            ];
+        }
+        return response()->json($result);
     }
 }

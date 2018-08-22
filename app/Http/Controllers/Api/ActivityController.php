@@ -16,7 +16,7 @@ class ActivityController extends Controller
     	$map = array();
     	$map['status'] = 1;
     	// $map[] = ['start_time', '>', time() + 60 * 60 * 12];  // 活动开始前12h不再允许报名
-    	$res = Activity::where($map)->orderBy($orderby)->get();
+    	$res = Activity::where($map)->orderBy($orderby, 'desc')->get();
     	if ($res) {
         	$res = $res->toArray();
         	foreach ($res as $key => &$value) {
@@ -32,6 +32,25 @@ class ActivityController extends Controller
                 'success' => false,
                 'data'    => null,
                 'error'   => '没有活動'
+            ];
+        }
+        return response()->json($result);
+    }
+
+    public function incrementView(Request $request)
+    {
+        $res = Activity::where('id', $request->id)->increment('views');
+        if ($res) {
+            $result = [
+                'success' => true,
+                'data'    => '',
+                'error'   => null
+            ];
+        } else {
+            $result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '操作失败'
             ];
         }
         return response()->json($result);

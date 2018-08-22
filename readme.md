@@ -16,7 +16,7 @@
 
 > vue                        前端框架
 
-> laravel-mix                前端资源编译工具
+> laravel-mix                前端资源编译工具 (vue的相关编译build)
 
 > vue-smooth-dnd             拖拽组件
 

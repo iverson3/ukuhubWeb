@@ -34,7 +34,8 @@
                 </Draggable>
             </Container>
         </div>
-        <button @click="saveSetting">保存</button> <span>{{saveTip}}</span>
+        <a class="btn btn-default" href="javascript:;" onclick="window.history.back()">返回</a>
+        <button class="btn btn-primary" @click="saveSetting">保存</button> <span>{{saveTip}}</span>
     </div>
 </template>
 

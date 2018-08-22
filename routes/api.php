@@ -20,9 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Music Api
 Route::group(['namespace' => 'Api', 'prefix' => 'music'], function() {
 	Route::post('getMusicList', 'MusicController@list');
+	Route::post('incrementView', 'MusicController@incrementView');
 });
 Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
 	Route::post('getActivityList', 'ActivityController@list');
+    Route::post('incrementView', 'ActivityController@incrementView');
+
 	Route::post('getMemberList', 'ActivityController@memberList');
 	Route::post('join/uploadPic', 'ActivityController@uploadPic');
 	Route::post('joinActivity', 'ActivityController@joinActivity');

@@ -45351,6 +45351,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -45650,7 +45651,20 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _c("button", { on: { click: _vm.saveSetting } }, [_vm._v("保存")]),
+    _c(
+      "a",
+      {
+        staticClass: "btn btn-default",
+        attrs: { href: "javascript:;", onclick: "window.history.back()" }
+      },
+      [_vm._v("返回")]
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      { staticClass: "btn btn-primary", on: { click: _vm.saveSetting } },
+      [_vm._v("保存")]
+    ),
     _vm._v(" "),
     _c("span", [_vm._v(_vm._s(_vm.saveTip))])
   ])
