@@ -38,8 +38,10 @@ class WeChatController extends Controller
 						// $user_info['country'] = $user['country'];
 						// $user_info['is_subscribe'] = 1;
 
-						$url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
-		                return '欢迎关注， 曲谱中心： ' . $url;
+                        $res = "欢迎关注\r\n";
+                        $res .= "您可以通过回复[活动] [曲谱]等关键字来获取相关信息\r\n";
+                        $res .= "或者通过回复具体的'曲谱名'获取想要的曲谱";
+		                return $res;
 		            } else if ($message['Event'] == 'unsubscribe') {
 		            	// 用户取消关注时执行的业务逻辑
 		            	return "已取消关注";
@@ -50,10 +52,11 @@ class WeChatController extends Controller
 					// FromUserName	发送方帐号（一个OpenID）
 					// CreateTime	消息创建时间 （整型）
 					// Content	    文本消息内容
-		        	$user_openid = $message['FromUserName'];
-		        	$unionid     = $message['ToUserName'];
+                    // $user_openid = $message['FromUserName'];
+                    // $unionid     = $message['ToUserName'];
 		        	$content     = $message['Content'];
-		        	$createTime  = $message['CreateTime'];
+		        	// $createTime  = $message['CreateTime'];
+
 		        	// if (is_numeric($content)) {
 		        	// 	$res = DB::table('pictures')->where('id', intval($content))->select('url')->first();
 		        	// 	if ($res) {
@@ -66,15 +69,36 @@ class WeChatController extends Controller
 		        	// 	return "无法识别您的消息";
 		        	// }
 
-		        	if (strpos($content, '报名') !== false) {
-		        		$url = 'http://wap.ukuhub.com/';
-		        		return '报名入口： ' . $url;
+		        	if (strpos($content, '报名') !== false || strpos($content, '活动') !== false) {
+		        		$url = 'http://wap.ukuhub.com/activity/list';
+		        		return '活动入口： ' . $url;
 		        	}
 
+                    if (strpos($content, '曲谱') !== false || strpos($content, '谱子') !== false) {
+                        $url = 'http://wap.ukuhub.com/home/music';
+                        return '曲谱中心： ' . $url;
+                    }
+
+                    $map[] = ['name', 'like', '%'.$content.'%'];
+                    $list = Music::where($map)->select('id')->get();
+
+                    if (!$list || count($list) == 0) {
+                        return '无法识别您的消息或找不到您搜的曲谱，请回复相关关键字';
+                    }
+                    if (count($list) == 1) {
+                        $url = "搜索结果：\r\n";
+                        $url .= "http://wap.ukuhub.com/music/detail?id=" . $list[0]['id'];
+                        return $url;
+                    } else {
+                        $res = "多个结果：\r\n";
+                        foreach ($list as $music) {
+                            $url = "http://wap.ukuhub.com/music/detail?id=" . $music['id'] . "\r\n";
+                            $res .= $url;
+                        }
+                        return $res;
+                    }
+
 		        	// $url = 'http://' . $_SERVER["HTTP_HOST"] . '/wechat/music/list';
-		        	$url = 'http://wap.ukuhub.com/';
-		        	return '曲谱中心： ' . $url;
-		        	// return $user_openid . '-' . $unionid . '-' . $content . '-' . $createTime;
                     break;
                 case 'image':
                     return '收到图片消息';
