@@ -12,6 +12,9 @@ class Activity extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
+
+    // 模型修改器
+    // 在获取和修改字段值的时候，进行需要的处理
     public function setStartTimeAttribute($value)
     {
         $this->attributes['start_time'] = is_int($value) ? $value : strtotime($value);

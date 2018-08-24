@@ -34,4 +34,6 @@ Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
 	Route::post('cancelActivity', 'ActivityController@cancelActivity');
 	Route::post('getGroupAndMember', 'ActivityController@getGroupAndMember')->name('api.activity.getGroupAndMember');
 	Route::post('saveGroupSetting', 'ActivityController@saveGroupSetting')->name('api.activity.saveGroupSetting');
+    Route::get('exportGroup', 'ActivityController@exportGroup')->name('api.activity.exportGroup');
 });
+

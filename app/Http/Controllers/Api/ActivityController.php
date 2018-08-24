@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\ActivityMember;
 use App\Models\Group;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ActivityController extends Controller
 {
@@ -249,6 +250,31 @@ class ActivityController extends Controller
         $groupList = $groupList->toArray();
 
         if ($groupList) {
+
+            $idStr = '';
+            foreach ($groupList as $key => $group) {
+                $idStr = $idStr . ',' . $group['members'];
+            }
+            $idStr = substr($idStr, 1);
+            $idArr = explode(',', $idStr);
+
+            $map['activity_id'] = $activity_id;
+            $map['join_status'] = 1;
+            $map['status']      = 1;
+            $members = ActivityMember::where($map)->get();
+            $members = $members->toArray();
+
+            $otherMember = array();
+            foreach ($members as $key => $member) {
+                if (!in_array($member['id'], $idArr)) {
+                    $otherMember[] = $member;
+                }
+            }
+            if (count($otherMember) > 0) {
+                $groups['未分组'] = $otherMember;
+            }
+
+
             foreach ($groupList as $key => $group) {
                 $memberList = array();
                 $ids = explode(',', $group['members']);
@@ -309,12 +335,14 @@ class ActivityController extends Controller
         $activity_id = $request->activity_id;
         $groups      = $request->groups;
         foreach ($groups as $key => $group) {
-            $ids = implode(',', $group);
-            $map['activity_id'] = $activity_id;
-            $map['leader']      = $key;
+            if ($key != '未分组') {
+                $ids = implode(',', $group);
+                $map['activity_id'] = $activity_id;
+                $map['leader']      = $key;
 
-            $data['members'] = $ids;
-            Group::where($map)->update($data);
+                $data['members'] = $ids;
+                Group::where($map)->update($data);
+            }
         }
         $result = [
             'success' => true,
@@ -322,5 +350,67 @@ class ActivityController extends Controller
             'error'   => null
         ];
         return response()->json($result);
+    }
+
+    // 导出分组信息
+    public function exportGroup(Request $request)
+    {
+        // 导出的member字段
+        $fields      = $request->fields;
+        $activity_id = $request->activity_id;
+
+        $fieldArr = explode(',', $fields);
+        $data = array();
+
+        $list = Group::where('activity_id', $activity_id)->select('leader', 'members')->get();
+        foreach ($list as $group) {
+            $leader = $group['leader'];
+            $idArr  = explode(',', $group['members']);
+
+            $members = array($leader);
+            foreach ($idArr as $id) {
+                $info = '';
+                $member = ActivityMember::where('id', $id)->select('*')->first();
+                $member = $member->toArray();
+                foreach ($member as $key => $value) {
+                    if (in_array($key, $fieldArr)) {
+                        $info = $info . $value . '-';
+                    }
+                }
+                $members[] = substr($info,0,strlen($info) - 1);
+            }
+            $data[] = $members;
+        }
+        $data = $this->RowColumnExchange($data);
+
+        Excel::create('分组结果', function($excel) use ($data){
+            $excel->sheet('score', function($sheet) use ($data){
+                $sheet->rows($data);
+            });
+        })->export('xls');
+    }
+
+    // 二维数组的行列转换
+    private function RowColumnExchange($arr1)
+    {
+        $rowCount = count($arr1);
+        $columnCount = 0;
+        foreach ($arr1 as $value) {
+            if (count($value) > $columnCount) {
+                $columnCount = count($value);
+            }
+        }
+        for ($i = 0; $i < $columnCount; $i++) {
+            for ($j = 0; $j < $rowCount; $j++) {
+                $arr2[$i][$j] = '';
+            }
+        }
+
+        for ($i = 0; $i < count($arr1); $i++) {
+            for ($j = 0; $j < count($arr1[$i]); $j++) {
+                $arr2[$j][$i] = $arr1[$i][$j];
+            }
+        }
+        return $arr2;
     }
 }

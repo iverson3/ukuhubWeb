@@ -44954,7 +44954,7 @@ exports = module.exports = __webpack_require__(47)(false);
 
 
 // module
-exports.push([module.i, "\n.drop-container-div[data-v-870bd598] {\n    margin-right: 20px;\n}\n.card-column-header[data-v-870bd598] {\n    margin-bottom: 10px;\n}\n.drop-div[data-v-870bd598] {\n    /*padding: 20px 10px 20px 10px;*/\n    /*margin: 20px 0px 10px 0px;*/\n}\n.member-info[data-v-870bd598] {\n    line-height: 12px;\n}\n", ""]);
+exports.push([module.i, "\n.drop-container-div[data-v-870bd598] {\n    margin-right: 20px;\n}\n.card-column-header[data-v-870bd598] {\n    margin-bottom: 10px;\n}\n.drop-div[data-v-870bd598] {\n    /*padding: 20px 10px 20px 10px;*/\n    /*margin: 20px 0px 10px 0px;*/\n}\n.member-info[data-v-870bd598] {\n    line-height: 12px;\n}\n.export-div[data-v-870bd598] {\n    margin-top: 20px;\n}\n", ""]);
 
 // exports
 
@@ -45352,18 +45352,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "GroupSelect",
-  props: ['isEdit', 'fetch_api_url', 'save_api_url', 'activity_id', 'uid'],
+  props: ['isEdit', 'fetch_api_url', 'save_api_url', 'export_api_url', 'activity_id', 'uid'],
   components: { Container: __WEBPACK_IMPORTED_MODULE_0_vue_smooth_dnd__["Container"], Draggable: __WEBPACK_IMPORTED_MODULE_0_vue_smooth_dnd__["Draggable"] },
   data: function data() {
     return {
       groups: [],
       saveTip: '',
+      isShowExport: false,
+      fieldList: [{ field: 'name', 'title': '名字' }, { field: 'wechat', 'title': '微信号' }, { field: 'music_type', 'title': '乐器类型' }, { field: 'level', 'title': '能力分类' }, { field: 'remark', 'title': '备注信息' }],
+      fields: [],
 
       scene: null
     };
@@ -45451,9 +45463,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var data = {};
       this.scene.children.forEach(function (group) {
         var name = group.name;
-        data[name] = group.children.map(function (member) {
-          return parseInt(member.id);
-        });
+        if (name !== '未分组') {
+          data[name] = group.children.map(function (member) {
+            return parseInt(member.id);
+          });
+        }
       });
 
       Object.keys(data).map(function (key) {
@@ -45479,6 +45493,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         _this2.saveTip = '设置出错';
         console.log(err);
       });
+    },
+    showExport: function showExport() {
+      this.isShowExport = !this.isShowExport;
+    },
+    exportGroup: function exportGroup() {
+      if (this.fields.length === 0) {
+        alert('请先选择需要导出的字段');
+        return false;
+      }
+      var fields = this.fields.join(',');
+
+      var url = this.export_api_url + '?activity_id=' + this.activity_id + '&fields=' + fields;
+      window.location.href = url;
     }
   }
 });
@@ -45666,7 +45693,82 @@ var render = function() {
       [_vm._v("保存")]
     ),
     _vm._v(" "),
-    _c("span", [_vm._v(_vm._s(_vm.saveTip))])
+    _c("span", [_vm._v(_vm._s(_vm.saveTip))]),
+    _vm._v(" "),
+    _c("div", { staticClass: "export-div" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-default", on: { click: _vm.showExport } },
+        [_vm._v("显示导出面板")]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.isShowExport,
+              expression: "isShowExport"
+            }
+          ]
+        },
+        [
+          _vm._l(_vm.fieldList, function(field, index) {
+            return [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.fields,
+                    expression: "fields"
+                  }
+                ],
+                attrs: { type: "checkbox" },
+                domProps: {
+                  value: field.field,
+                  checked: Array.isArray(_vm.fields)
+                    ? _vm._i(_vm.fields, field.field) > -1
+                    : _vm.fields
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.fields,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = field.field,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.fields = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.fields = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
+                    } else {
+                      _vm.fields = $$c
+                    }
+                  }
+                }
+              }),
+              _vm._v(" " + _vm._s(field.title) + "\n            ")
+            ]
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _c(
+            "button",
+            { staticClass: "btn btn-primary", on: { click: _vm.exportGroup } },
+            [_vm._v("导出")]
+          )
+        ],
+        2
+      )
+    ])
   ])
 }
 var staticRenderFns = []

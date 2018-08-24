@@ -36,6 +36,15 @@
         </div>
         <a class="btn btn-default" href="javascript:;" onclick="window.history.back()">返回</a>
         <button class="btn btn-primary" @click="saveSetting">保存</button> <span>{{saveTip}}</span>
+        <div class="export-div">
+            <button class="btn btn-default" @click="showExport">显示导出面板</button>
+            <div v-show="isShowExport">
+                <template v-for="(field,index) in fieldList">
+                    <input type="checkbox" v-model='fields' :value="field.field"> {{field.title}}
+                </template>
+                <br/><button class="btn btn-primary" @click="exportGroup">导出</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -45,12 +54,21 @@
 
   export default {
     name: "GroupSelect",
-    props: ['isEdit', 'fetch_api_url', 'save_api_url', 'activity_id', 'uid'],
+    props: ['isEdit', 'fetch_api_url', 'save_api_url', 'export_api_url', 'activity_id', 'uid'],
     components: { Container, Draggable },
     data () {
       return {
         groups: [],
         saveTip: '',
+        isShowExport: false,
+        fieldList: [
+          {field: 'name', 'title': '名字'},
+          {field: 'wechat', 'title': '微信号'},
+          {field: 'music_type', 'title': '乐器类型'},
+          {field: 'level', 'title': '能力分类'},
+          {field: 'remark', 'title': '备注信息'}
+        ],
+        fields: [],
 
         scene: null
       }
@@ -128,9 +146,11 @@
         let data = {}
         this.scene.children.forEach((group) => {
           let name = group.name
-          data[name] = group.children.map((member) => {
-            return parseInt(member.id)
-          })
+          if (name !== '未分组') {
+            data[name] = group.children.map((member) => {
+              return parseInt(member.id)
+            })
+          }
         })
 
         Object.keys(data).map((key) => {
@@ -160,6 +180,21 @@
             this.saveTip = '设置出错'
             console.log(err)
           })
+      },
+
+      showExport () {
+        this.isShowExport = !this.isShowExport
+      },
+      exportGroup () {
+        if (this.fields.length === 0) {
+          alert('请先选择需要导出的字段')
+          return false
+        }
+        let fields = this.fields.join(',')
+
+        let url = this.export_api_url + '?activity_id=' + this.activity_id + '&fields=' + fields
+        window.location.href = url
+
       }
     }
   }
@@ -178,5 +213,8 @@
     }
     .member-info {
         line-height: 12px;
+    }
+    .export-div {
+        margin-top: 20px;
     }
 </style>

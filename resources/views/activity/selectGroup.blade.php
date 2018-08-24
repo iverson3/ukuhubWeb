@@ -16,6 +16,7 @@
                     activity_id="{{ $activity_id  }}"
                     fetch_api_url="{{ route('api.activity.getGroupAndMember') }}"
                     save_api_url="{{ route('api.activity.saveGroupSetting') }}"
+                    export_api_url="{{ route('api.activity.exportGroup') }}"
                 ></group-select>
             </div>
         </div>
