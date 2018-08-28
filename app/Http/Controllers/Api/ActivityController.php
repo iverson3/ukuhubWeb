@@ -222,7 +222,7 @@ class ActivityController extends Controller
     	$map['activity_id'] = $request->activity_id;
     	$map['wechat']      = $request->wechat;
     	$data['join_status'] = 0;
-    	$res = ActivityMember::where($map)->save($data);
+    	$res = ActivityMember::where($map)->update($data);
     	if ($res) {
     		$result = [
                 'success' => true,
