@@ -92,15 +92,24 @@
                 orientation: "vertical",
                 className: "card-container"
               },
-              children: generateChildItems(childList, (child) => ({
-                type: "draggable",
-                id: `${child.id}`,
-                props: {
-                  className: "card",
-                  style: { backgroundColor: "khaki" }
-                },
-                data: `<p>${child.name} (${child.wechat})</p> <p>${child.music_type} - ${child.level}</p> <p>备注：${child.remark}</p>`
-              }))
+              children: generateChildItems(childList, (child) => {
+                let color = "khaki"
+                if (child.join_status == 0) {
+                  color = "#FFDC35"
+                }
+                if (child.status == 0) {
+                  color = "red"
+                }
+                return {
+                  type: "draggable",
+                  id: `${child.id}`,
+                  props: {
+                    className: "card",
+                    style: { backgroundColor: color }
+                  },
+                  data: `<p style="max-width:200px;">${child.name} (${child.wechat})</p> <p>${child.music_type} - ${child.level}</p> <p style="max-width:180px;line-height:15px;">备注：${child.remark}</p>`
+                }
+              })
             }))
           };
         })

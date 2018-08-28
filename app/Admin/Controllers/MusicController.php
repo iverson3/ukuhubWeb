@@ -10,6 +10,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use DB;
 
 class MusicController extends Controller
 {
@@ -82,6 +83,23 @@ class MusicController extends Controller
     {
         return Admin::grid(Music::class, function (Grid $grid) {
 
+            $grid->actions(function ($actions) {
+                // 没有`delete-music`权限的角色不显示删除按钮
+                if (!Admin::user()->can('delete-music')) {
+                    $actions->disableDelete();
+                }
+                // 管理员只能修改自己创建的曲谱
+                // 需求：对于自己创建的曲谱才在后面显示编辑按钮
+                // $actions->disableEdit();
+            });
+            $grid->tools(function ($tools) {
+                if (!Admin::user()->can('delete-music')) {
+                    $tools->batch(function ($batch) {
+                        $batch->disableDelete();
+                    });
+                }
+            });
+
             // 过滤字段设置
             $grid->filter(function ($filter) {
                 // 去掉默认的id过滤器
@@ -97,13 +115,14 @@ class MusicController extends Controller
                 $filter->like('name', '曲谱名');
                 $filter->like('author', '制谱者');
                 $filter->like('theme', '主题');
-                $filter->gt('views', '該瀏覽量以上');
-                $filter->gt('likes', '該點讚數以上');
-                $filter->gt('forwards', '該轉發數以上');
+                $filter->gt('views', '该浏览量以上');
+                $filter->gt('likes', '该点赞数以上');
+                $filter->gt('forwards', '该转发数以上');
                 $filter->between('created_at', '创建时间')->datetime();
             });
 
-            $grid->name('曲谱名')->editable();
+            // $grid->name('曲谱名')->editable();
+            $grid->name('曲谱名')->limit(20);
             $grid->type('类型');
             $grid->tag('难度');
             $grid->author('制谱者');
@@ -114,13 +133,21 @@ class MusicController extends Controller
             $grid->sort('排序')->sortable();
 
             // 添加数据表中不存在的字段
-            $grid->column('linkUser', '修改者')->display(function () {
-                return Admin::user()->name;
-            })->color('red');
+            // $grid->column('linkUser', '修改者')->display(function () {
+            //     return Admin::user()->name;
+            // })->color('red');
+
+            // 只有具有`show-creater-of-music`权限的用户才能显示`creater`这一列
+            if (Admin::user()->can('show-creater-of-music')) {
+                $grid->column('uid', '修改者')->display(function () {
+                    $name = DB::table('admin_users')->where('id', $this->uid)->value('name');
+                    return $name;
+                })->color('red');
+            }
 
             $grid->status('状态')->switch(config('ukuhub.music.statusList'));
 
-            $grid->created_at('創建時間')->sortable();
+            $grid->created_at('创建时间')->sortable();
         });
     }
 
@@ -156,7 +183,8 @@ class MusicController extends Controller
                 'required' => '字段不能为空'
             ]);
 
-            $form->text('author', '制谱者')->rules('max:20', [
+            $form->text('author', '制谱者')->rules('required|max:20', [
+                'required' => '字段不能为空',
                 'max' => '不能超过20个字符'
             ]);
 
@@ -164,7 +192,9 @@ class MusicController extends Controller
                 'max' => '不能超过20个字符'
             ]);
 
-            $form->image('url', '曲谱封面图')->removable();
+            $form->image('url', '曲谱封面图')->removable()->rules('required', [
+                'required' => '字段不能为空',
+            ]);
 
             $form->wangeditor('content', '曲谱详情')->rules('required', [
                 'required' => '字段不能为空'
@@ -186,8 +216,8 @@ class MusicController extends Controller
                 
             }
 
-            $form->display('created_at', '創建時間');
-            $form->display('updated_at', '更新時間');
+            $form->display('created_at', '创建时间');
+            $form->display('updated_at', '更新时间');
         });
     }
 }

@@ -65,7 +65,7 @@ class GroupController extends Controller
         return Admin::content(function (Content $content) {
 
             $content->header($this->header);
-            $content->description('新增');
+            $content->description('新建');
 
             $content->body($this->form());
         });

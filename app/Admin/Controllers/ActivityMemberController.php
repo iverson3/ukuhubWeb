@@ -20,7 +20,7 @@ class ActivityMemberController extends Controller
 {
     use ModelForm;
 
-    protected $header = "活動人員管理";
+    protected $header = "活动人员管理";
     protected $action = '';
 
     protected $member_id = 0;
@@ -55,7 +55,7 @@ class ActivityMemberController extends Controller
         return Admin::content(function (Content $content) use ($id) {
 
             $content->header($this->header);
-            $content->description('編輯');
+            $content->description('编辑');
 
             $content->body($this->form()->edit($id));
         });
@@ -116,26 +116,27 @@ class ActivityMemberController extends Controller
                 foreach ($res->toArray() as $key => $value) {
                     $activityList[$value['id']] = $value['name'];
                 }
-                $filter->equal('activity_id', '活動')->select($activityList);
+                $filter->equal('activity_id', '活动')->select($activityList);
 
                 $filter->like('name', '名字');
-                $filter->like('wechat', '微信號');
-                $filter->equal('music_type', '樂器類型')->select(config('ukuhub.music.music_type'));
+                $filter->like('wechat', '微信号');
+                $filter->equal('music_type', '乐器类型')->select(config('ukuhub.music.music_type'));
                 $filter->equal('level', '分組')->select(config('ukuhub.music.level'));
                 $filter->equal('join_status', '报名状态')->select(config('ukuhub.music.joinStatus'));
                 $filter->equal('status', '状态')->select(config('ukuhub.music.statusSelect'));
-                $filter->between('created_at', '報名时间')->datetime();
+                $filter->between('created_at', '报名时间')->datetime();
             });
 
             $grid->id('ID')->sortable();
-            $grid->name('名字');
-            $grid->wechat('微信號');
-            $grid->music_type('樂器類型');
+            $grid->name('名字')->limit(10);
+            $grid->wechat('微信号');
+            $grid->music_type('乐器类型');
             $grid->level('分組');
-            $grid->remark('備註信息');
+            $grid->pic('琴图或视频地址')->imageOrUrl();
+            $grid->remark('备注信息')->limit(20);
             $grid->join_status('报名状态')->switch(config('ukuhub.music.joinStatusList'));
             $grid->status('状态')->switch(config('ukuhub.music.statusList'));
-            $grid->created_at('報名時間')->sortable();
+            $grid->created_at('报名时间')->sortable();
         });
     }
 
@@ -151,9 +152,9 @@ class ActivityMemberController extends Controller
             // 保存前回调
             $form->saving(function ($form) {
                 // 在保存数据之前根据需要对表单数据进行需要的修改调整或校验
-                if ($form->remark == null) {
-                    $form->remark = '';
-                }
+                // if ($form->remark == null) {
+                    // $form->remark = '';
+                // }
             });
 
             $form->display('id', 'ID');
@@ -163,21 +164,21 @@ class ActivityMemberController extends Controller
             foreach ($res->toArray() as $key => $value) {
                 $activityList[$value['id']] = $value['name'];
             }
-            $form->select('activity_id', '報名活動')->options($activityList)->rules('required', [
+            $form->select('activity_id', '报名活动')->options($activityList)->rules('required', [
                 'required' => '字段不能为空'
             ]);
 
-            $form->text('wechat', '微信號')->rules('required|max:30', [
+            $form->text('wechat', '微信号')->rules('required|max:30', [
                 'required' => '字段不能为空',
                 'max'      => '不能超过30个字符',
             ]);
 
-            $form->text('name', '網名/真名')->rules('required|max:30', [
+            $form->text('name', '网名/真名')->rules('required|max:30', [
                 'required' => '字段不能为空',
                 'max'      => '不能超过30个字符',
             ]);
 
-            $form->select('music_type', '樂器類型')->options(config('ukuhub.music.music_type'))->rules('required', [
+            $form->select('music_type', '乐器类型')->options(config('ukuhub.music.music_type'))->rules('required', [
                 'required' => '字段不能为空'
             ]);
             $form->select('level', '分組')->options(config('ukuhub.music.level'))->rules('required', [
@@ -193,13 +194,13 @@ class ActivityMemberController extends Controller
                 ]);
             }
 
-            $form->text('remark', '備註信息')->rules('max:100', [
-                'max' => '不能超过100个字符',
-            ]);
+            $form->display('remark', '备注信息');
             $form->switch('join_status', '报名状态')->states(config('ukuhub.music.joinStatusList'))->default(1);
             $form->switch('status', '状态')->states(config('ukuhub.music.statusList'))->default(1);
 
-            $form->display('created_at', '創建時間');
+            $form->ignore(['remark']);
+
+            $form->display('created_at', '创建时间');
             $form->display('updated_at', '更新時間');
         });
     }
@@ -294,7 +295,7 @@ class ActivityMemberController extends Controller
         return Admin::content(function (Content $content) use ($data, $list) {
 
             // 选填
-            $content->header('活動人員詳情');
+            $content->header('活动人员详情');
 
             // 选填
             $content->description('小标题');

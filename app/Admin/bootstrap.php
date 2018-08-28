@@ -36,3 +36,18 @@ Column::extend('color', function ($value, $color) {
 	// 其他逻辑处理
     return "<span style='color: $color'>$value</span>";
 });
+
+Column::extend('imageOrUrl', function ($value) {
+	// 默认显示为文本 (即参数不是图片链接)
+	$content = "<span style='max-width:120px;display:inline-block;word-break:break-all;'>" . $value . "</span>";
+	$arr = explode(".", $value);
+	$imageExt = array('png', 'jpg', 'jpeg', 'gif', 'bmp');
+	if (count($arr) > 0) {
+		$extension = end($arr);
+		if (in_array($extension, $imageExt)) {
+			// 如果参数是图片链接，则显示为图片
+			$content = "<img src='" . $value . "' title='乐器照片' alt='乐器图片' style='max-width:120px;max-height:100px;' />";
+		}
+	}
+    return $content;
+});

@@ -45400,14 +45400,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
               className: "card-container"
             },
             children: Object(__WEBPACK_IMPORTED_MODULE_1__tools_utils__["b" /* generateChildItems */])(childList, function (child) {
+              var color = "khaki";
+              if (child.join_status == 0) {
+                color = "#FFDC35";
+              }
+              if (child.status == 0) {
+                color = "red";
+              }
               return {
                 type: "draggable",
                 id: "" + child.id,
                 props: {
                   className: "card",
-                  style: { backgroundColor: "khaki" }
+                  style: { backgroundColor: color }
                 },
-                data: "<p>" + child.name + " (" + child.wechat + ")</p> <p>" + child.music_type + " - " + child.level + "</p> <p>\u5907\u6CE8\uFF1A" + child.remark + "</p>"
+                data: "<p style=\"max-width:200px;\">" + child.name + " (" + child.wechat + ")</p> <p>" + child.music_type + " - " + child.level + "</p> <p style=\"max-width:180px;line-height:15px;\">\u5907\u6CE8\uFF1A" + child.remark + "</p>"
               };
             })
           };

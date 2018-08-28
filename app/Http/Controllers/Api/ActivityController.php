@@ -280,7 +280,7 @@ class ActivityController extends Controller
                 $memberList = array();
                 $ids = explode(',', $group['members']);
                 foreach ($ids as $k => $v) {
-                    $member = ActivityMember::where('id', $v)->select('id','wechat','name','music_type','level','remark')->first();
+                    $member = ActivityMember::where('id', $v)->select('id','wechat','name','music_type','level','remark','join_status','status')->first();
                     if ($member) {
                         $memberList[] = $member;
                     }
