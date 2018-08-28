@@ -115,6 +115,7 @@ class ActivityController extends Controller
     	// 不許重複報名
     	$map2['activity_id'] = $request->activity_id;
     	$map2['wechat']      = $request->wechat;
+        $map2['join_status'] = 1;
     	$res2 = ActivityMember::where($map2)->first();
     	if ($res2) {
     		$result = [
