@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Music Api
 Route::group(['namespace' => 'Api', 'prefix' => 'music'], function() {
 	Route::post('getMusicList', 'MusicController@list');
+	Route::post('getDetail', 'MusicController@getMusicDetail');
 	Route::post('incrementView', 'MusicController@incrementView');
 });
 Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {

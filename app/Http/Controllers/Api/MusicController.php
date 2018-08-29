@@ -62,6 +62,26 @@ class MusicController extends Controller
         return response()->json($result, 200, [], 1);
     }
 
+    public function getMusicDetail(Request $request) 
+    {
+        $id = $request->id;
+        $res = Music::where('id', $id)->first();
+        if ($res) {
+            $result = [
+                'success' => true,
+                'data'    => $res,
+                'error'   => null
+            ];
+        } else {
+            $result = [
+                'success' => false,
+                'data'    => null,
+                'error'   => '没有数据'
+            ];
+        }
+        return response()->json($result);
+    }
+
     public function incrementView(Request $request)
     {
         $res = Music::where('id', $request->id)->increment('views');
