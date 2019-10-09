@@ -209,6 +209,14 @@ class MusicController extends Controller
             $form->hidden('forwards')->default(5);
             $form->hidden('uid')->default(Admin::user()->id); // 获取当前登录用户ID
 
+
+            $form->switch('aaa', 'aaa')->states(config('ukuhub.music.statusList'))->default(1);
+            $form->text('bbb', 'bbb')->rules('max:20', [
+                'max' => '不能超过20个字符'
+            ]);
+            $form->html(view('admin.music.deal'));
+
+
              // 通过自定义的属性$action 来判断某些特殊字段的表单呈现方式
             if ($this->action == 'create') {
                 
