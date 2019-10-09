@@ -38,3 +38,7 @@ Route::group(['namespace' => 'Api', 'prefix' => 'activity'], function() {
     Route::get('exportGroup', 'ActivityController@exportGroup')->name('api.activity.exportGroup');
 });
 
+Route::group(['namespace' => 'Api', 'prefix' => 'user'], function() {
+	Route::post('fetchSessionKey', 'UserController@fetchSessionKey');
+});
+
