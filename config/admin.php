@@ -5,17 +5,17 @@ return [
     /*
      * Laravel-admin name.
      */
-    'name' => 'Laravel-admin',
+    'name' => 'Ukuhub-admin',
 
     /*
      * Logo in admin panel header.
      */
-    'logo' => '<b>Laravel</b> admin',
+    'logo' => '<b>Ukuhub</b> admin',
 
     /*
      * Mini-logo in admin panel header.
      */
-    'logo-mini' => '<b>La</b>',
+    'logo-mini' => '<b>uku</b>',
 
     /*
      * Route configuration.
@@ -37,12 +37,12 @@ return [
     /*
      * Laravel-admin html title.
      */
-    'title' => 'Admin',
+    'title' => 'ukuhub-admin',
 
     /*
      * Use `https`.
      */
-    'secure' => false,
+    'secure' => true,
 
     /*
      * Laravel-admin auth setting.
