@@ -8,11 +8,17 @@ use App\Models\Activity;
 use App\Models\ActivityMember;
 use App\Models\Group;
 use Maatwebsite\Excel\Facades\Excel;
+use Cache;
 
 class ActivityController extends Controller
 {
     public function list(Request $request)
     {
+        $res = $this->verifyToken($request);
+        if (is_array($res)) {
+            return response()->json($res);
+        }
+        
     	$orderby = $request->orderby;
     	$map = array();
     	$map['status'] = 1;
@@ -84,8 +90,50 @@ class ActivityController extends Controller
         return response()->json($result);
     }
 
+    private function verifyToken($request) {
+        $result = array();
+        if (!Cache::has('token')) {
+            $result = [
+                'success' => false,
+                'code'    => 'expired',
+                'data'    => null,
+                'error'   => 'token不存在或已過期'
+            ];
+        }
+
+        $token  = $request->header('token');
+        if ($token === null || $token == '') {
+            $result = [
+                'success' => false,
+                'code'    => 'notoken',
+                'data'    => null,
+                'error'   => '沒有token參數'
+            ];
+        }
+
+        $_token = Cache::get('token');
+        if ($token != $_token) {
+            $result = [
+                'success' => false,
+                'code'    => 'wrongtoken',
+                'data'    => null,
+                'error'   => 'token不對'
+            ];
+        }
+        if (count($result) == 0) {
+            return true;
+        } else {
+            return $result;
+        }
+    }
+
     public function joinActivity(Request $request)
     {
+        $res = $this->verifyToken($request);
+        if (is_array($res)) {
+            return response()->json($res);
+        }
+
     	$pic = $request->pic;
     	if ($request->remark == null) {
     		$remark = '';
