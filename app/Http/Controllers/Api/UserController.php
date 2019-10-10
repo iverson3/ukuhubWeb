@@ -30,7 +30,7 @@ class UserController extends Controller
             $openid = $request->openid;
             // 生成token
             $token = md5($openid . time());
-            Cache::put('token', $token, $minutes);
+            Cache::put($openid, $token, $minutes);
 
             $data = array(
                 'token'    => $token, 
@@ -70,7 +70,7 @@ class UserController extends Controller
 
                 // 生成token
                 $token = md5($openid . time());
-                Cache::put('token', $token, $minutes);
+                Cache::put($openid, $token, $minutes);
 
                 $data['token']    = $token;
                 $data['duration'] = $minutes;

@@ -92,7 +92,18 @@ class ActivityController extends Controller
 
     private function verifyToken($request) {
         $result = array();
-        if (!Cache::has('token')) {
+
+        $openid = $request->header('openId');
+        if ($openid === null || $openid == '') {
+            $result = [
+                'success' => false,
+                'code'    => 'noopenid',
+                'data'    => null,
+                'error'   => '沒有openId參數'
+            ];
+        }
+
+        if (!Cache::has($openid)) {
             $result = [
                 'success' => false,
                 'code'    => 'expired',
@@ -111,7 +122,7 @@ class ActivityController extends Controller
             ];
         }
 
-        $_token = Cache::get('token');
+        $_token = Cache::get($openid);
         if ($token != $_token) {
             $result = [
                 'success' => false,
