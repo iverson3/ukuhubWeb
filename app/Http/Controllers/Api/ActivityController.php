@@ -14,10 +14,10 @@ class ActivityController extends Controller
 {
     public function list(Request $request)
     {
-        $res = $this->verifyToken($request);
-        if (is_array($res)) {
-            return response()->json($res);
-        }
+        // $res = $this->verifyToken($request);
+        // if (is_array($res)) {
+        //     return response()->json($res);
+        // }
         
     	$orderby = $request->orderby;
     	$map = array();
