@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.empty_layout')
 
 @section('styles')
     <style type="text/css">
@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <div class="container">
+    <div class="container" style="margin-top: 30px;">
         <div class="container-fluid container-group-select">
             <div class="row">
                 <group-select
