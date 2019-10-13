@@ -16,8 +16,8 @@ require('vue-resource');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-Vue.component('group-select', require('./components/GroupSelect.vue'));
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('group-select', require('./components/GroupSelect.vue').default);
 
 
 

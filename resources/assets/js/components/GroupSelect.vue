@@ -211,7 +211,7 @@
 
 <style scoped>
     .drop-container-div {
-        margin-right: 20px;
+        margin-right: 220px;
     }
     .card-column-header {
         margin-bottom: 10px;
